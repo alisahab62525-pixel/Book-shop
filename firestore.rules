@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'alisahab62525@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Admins Collection: restricted to authenticated administrators only
+    match /admins/{adminId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // Products Collection: public catalog reading, admin-only write
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Categories Collection: public catalog reading, admin-only write
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Orders Collection: public can create their order and get by ID, but only admin can list or edit orders
+    match /orders/{orderId} {
+      allow create: if request.resource.data.orderNumber is string
+                    && request.resource.data.grandTotal is number
+                    && request.resource.data.status is string;
+      allow get: if true; // Single order verification by exact order ID
+      allow list: if isAdmin(); // Enforces that customers/unauthenticated visitors CANNOT query or list all customer orders
+      allow update, delete: if isAdmin();
+    }
+
+    // Custom Design Requests: customer can create design brief, only admin can list/manage all requests
+    match /designRequests/{requestId} {
+      allow create: if request.resource.data.requestId is string
+                    && request.resource.data.customerName is string
+                    && request.resource.data.customerPhone is string;
+      allow get: if true;
+      allow list: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // Shop Settings
+    match /shopSettings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Inventory Movements
+    match /inventoryMovements/{movId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Expenses
+    match /expenses/{expId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Suppliers
+    match /suppliers/{supId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Coupons
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

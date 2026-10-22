@@ -1,0 +1,6 @@
+{
+  "name": "Beyond Notebooks - Custom Stationery & Printing Pakistan",
+  "description": "Premium Pakistani customized notebook printing, school copies, accounting registers, executive diaries, and personalized stationery.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

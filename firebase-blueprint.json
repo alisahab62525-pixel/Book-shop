@@ -1,0 +1,92 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Customized notebook or stationery item in catalog",
+      "type": "object",
+      "properties": {
+        "sku": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 200 },
+        "nameUrdu": { "type": "string", "maxLength": 200 },
+        "slug": { "type": "string", "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 3000 },
+        "categoryId": { "type": "string", "maxLength": 100 },
+        "categoryName": { "type": "string", "maxLength": 100 },
+        "coverImage": { "type": "string", "maxLength": 5000 },
+        "basePrice": { "type": "number" },
+        "discountedPrice": { "type": "number" },
+        "stockQuantity": { "type": "number" },
+        "lowStockThreshold": { "type": "number" },
+        "isCustomizable": { "type": "boolean" },
+        "isActive": { "type": "boolean" },
+        "isFeatured": { "type": "boolean" },
+        "isBestseller": { "type": "boolean" }
+      },
+      "required": ["sku", "name", "basePrice", "stockQuantity", "isActive"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer order with item snapshots and delivery info",
+      "type": "object",
+      "properties": {
+        "orderNumber": { "type": "string", "maxLength": 64 },
+        "customer": { "type": "object" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "shippingFee": { "type": "number" },
+        "discountAmount": { "type": "number" },
+        "grandTotal": { "type": "number" },
+        "status": { "type": "string", "maxLength": 64 },
+        "payment": { "type": "object" },
+        "shipping": { "type": "object" },
+        "orderSource": { "type": "string", "maxLength": 32 }
+      },
+      "required": ["orderNumber", "customer", "items", "grandTotal", "status"]
+    },
+    "DesignRequest": {
+      "title": "DesignRequest",
+      "description": "Custom manual artwork brief and quotation request",
+      "type": "object",
+      "properties": {
+        "requestId": { "type": "string", "maxLength": 64 },
+        "customerName": { "type": "string", "maxLength": 150 },
+        "customerPhone": { "type": "string", "maxLength": 50 },
+        "city": { "type": "string", "maxLength": 100 },
+        "notebookType": { "type": "string", "maxLength": 200 },
+        "designBrief": { "type": "string", "maxLength": 5000 },
+        "status": { "type": "string", "maxLength": 64 },
+        "estimatedQuantity": { "type": "number" }
+      },
+      "required": ["requestId", "customerName", "customerPhone", "city", "designBrief", "status"]
+    },
+    "ShopSetting": {
+      "title": "ShopSetting",
+      "description": "Configurable shop details and payment accounts",
+      "type": "object",
+      "properties": {
+        "shopName": { "type": "string", "maxLength": 150 },
+        "whatsappNumber": { "type": "string", "maxLength": 50 },
+        "contactPhone": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["shopName"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Public catalog products"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Customer purchase orders"
+    },
+    "/designRequests/{requestId}": {
+      "schema": "DesignRequest",
+      "description": "Custom design briefs and quotes"
+    },
+    "/shopSettings/{settingId}": {
+      "schema": "ShopSetting",
+      "description": "Global shop configuration"
+    }
+  }
+}
